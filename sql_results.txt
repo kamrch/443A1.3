@@ -1,0 +1,29 @@
+b2210-08:/s/csc443/kamryan1/lol\% sqlite3 ex3
+SQLite version 3.8.2 2013-12-06 14:53:30
+Enter ".help" for instructions
+Enter SQL statements terminated with a ";"
+sqlite> .open twitter
+sqlite> CREATE TABLE followers (uid1 integer, uid2 integer);
+sqlite> .separator ,
+sqlite> .import edges.csv followers
+sqlite> .timer on    
+sqlite> select count (*) from (select A.uid1, A.uid2 from (select * from followers where uid1 < uid2) as A, (select * from followers where uid2 < uid1) as B where A.uid1 = B.uid2 and A.uid2 = B.uid1);
+21776094
+Run Time: real 209.362 user 169.444000 sys 36.624000
+ 
+ 
+
+sqlite> .read celeb.sql
+Run Time: real 0.095 user 0.000000 sys 0.000000
+Run Time: real 0.084 user 0.004000 sys 0.000000
+5994113,564220
+7496,344850
+1349110,340491
+1629776,170111
+8121005,155933
+2041453,152069
+797152,118752
+6623784,115819
+645019,107639
+3403,97931
+Run Time: real 394.169 user 211.292000 sys 20.416000
