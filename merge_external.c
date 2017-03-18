@@ -234,8 +234,8 @@ void clean_up (MergeManager * merger) {
 		free(merger->input_buffers[x]);
 	}
 	free(merger->output_buffer);
-	free(merger->input_file_numbers);
-    free(merger->current_input_buffer_positions);
+	// free(merger->input_file_numbers);
+ //    free(merger->current_input_buffer_positions);
 	free(merger->heap);
 	free(merger);
 //	printf("End of 'clean_up.\n");
