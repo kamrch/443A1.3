@@ -14,9 +14,11 @@ MERGE_EXTERNAL=merge_external.c
 
 DISTRIBUTION_SRC=distribution.c
 
+TRUE_FRIENDS_SRC=true_friends.c
+
 
  
-all: disk_sort merge_external distribution
+all: disk_sort merge_external distribution true_friends
 
 
 disk_sort: $(DISK_SORT_SRC) $(DISK_SORT_SRC)
@@ -27,6 +29,9 @@ merge_external: $(MERGE_EXTERNAL) $(DISK_SORT_SRC)
 
 distribution: $(DISTRIBUTION_SRC)
 	$(CC) $(CFLAGS) $^ -o distribution
+	
+ture_friends: $(TRUE_FRIEND_SRC)
+	$(CC) $(CFLAGS) $^ -o true_friends	
 
 clean:  
-	rm disk_sort merge_external output*.dat distribution
+	rm disk_sort merge_external output*.dat distribution true_friends
