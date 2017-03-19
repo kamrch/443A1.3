@@ -149,11 +149,11 @@ int init_merge (MergeManager * manager) {
 			manager->current_input_buffer_positions[n]++;
 			
 		} else {
-			// printf ("here1\n");
+			// printf ("here 11111\n");
 			free(file_name);
 			return FAILURE;
 		}
-		// printf ("here2\n");
+		// printf ("here 22222\n");
 		fclose(fp);
 		free(file_name);
 	}
@@ -193,10 +193,10 @@ int get_next_input_element(MergeManager * manager, int file_number, Record *resu
 		}
 
 	}
-	manager->current_input_buffer_positions[file_number]+=1;
 
 
 	*result = manager->input_buffers[file_number][manager->current_input_buffer_positions[file_number]];
+	manager->current_input_buffer_positions[file_number]+=1;
 
 	return SUCCESS;
 }
@@ -222,11 +222,14 @@ int refill_buffer (MergeManager * manager, int file_number) {
             manager->current_input_file_positions[file_number] = -1;
         }
     }else{
-    	// printf ("here3\n");
+    	// printf ("here 333333\n");
         free(filename);
         return FAILURE;
-	}
-	// printf ("here4\n");
+    }
+
+
+
+	// printf ("here 444444\n");
 	free(filename);
 	fclose(fp);
 
@@ -252,8 +255,9 @@ int compare_heap_elements (HeapElement *a, HeapElement *b) {
 	if (a->UID2>b->UID2){
 	//	if ((a->UID2-b->UID2)>0){
 		return 1;
-	} else if ((a->UID2==b->UID2) && (a->UID1>b->UID1)){
-        return 1;
-    }
+	} 
+	// else if ((a->UID2==b->UID2) && (a->UID1>b->UID1)){
+ //        return 1;
+ //    }
 	return 0;
 }
