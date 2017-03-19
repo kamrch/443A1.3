@@ -4,6 +4,7 @@
 #include <sys/timeb.h>
 #include "merge.h"
 
+
 /**
 * Compares two records a and b
 * with respect to the value of the integer field f.
@@ -38,23 +39,27 @@ void print_buffer(Record* buffer, int total_records){
 int merge_runs_init(int block_size, int total_mem, int buffer_num) {
     MergeManager * manager = (MergeManager *)calloc(1, sizeof(MergeManager));
     //set up attributes of MergeManager shown in merge.h
-    int records_per_block = block_size / sizeof(Record);
     int block_num = total_mem / block_size;
+    int records_per_block = block_size / sizeof(Record);
+
     int blocks_per_buffer = block_num / (buffer_num+1);
     int records_per_buffer = records_per_block * blocks_per_buffer;
 
     manager->heap_capacity = buffer_num;
     manager->heap = (HeapElement *)calloc(buffer_num, sizeof(HeapElement));
+    manager->input_buffer_capacity = records_per_buffer;
     strcpy(manager->input_prefix, "output");
+
     strcpy(manager->output_file_name , "sorted_merge.dat");
+
     if (block_num % (buffer_num+1) > 0){
+    // Take account for the last block with remaining contents
         int remaining_block = block_num % (buffer_num+1);
         manager->output_buffer_capacity = records_per_buffer + records_per_block * remaining_block;
     }
     else {
         manager->output_buffer_capacity = records_per_buffer;
     }
-    manager->input_buffer_capacity = records_per_buffer;
 
     int input_file_numbers[buffer_num];
     int current_file_positions[buffer_num];
@@ -73,8 +78,8 @@ int merge_runs_init(int block_size, int total_mem, int buffer_num) {
     manager->output_buffer = (Record *)calloc(manager->output_buffer_capacity, sizeof(Record));
     manager->current_output_buffer_position = 0;
     manager->input_buffers = input_buffers;
-    manager->current_input_file_positions = current_file_positions;
     manager->current_input_buffer_positions = current_buffer_positions;
+    manager->current_input_file_positions = current_file_positions;
     manager->total_input_buffer_elements = total_input_buffer_elements;
     // calls merge_runs in merge_external.c
     merge_runs(manager);
@@ -111,7 +116,7 @@ int main(int argc, char *argv[]){
     int file_size = ftell(fp_read);
     // int total_records = file_size / sizeof(Record);
     //find the number of chunks
-    int chunks = file_size/(block_num * block_size);
+    int chunks = file_size/(block_size * block_num);
     int records_per_block = block_size / sizeof(Record);
     int remaining_chunk = file_size - (chunks * block_num * block_size);
     //find the number of records in each chunk
@@ -155,7 +160,7 @@ int main(int argc, char *argv[]){
                 break;
             }
 
-        } else {
+        } else {    
             Record * buffer = (Record *) calloc (chunk_records, sizeof (Record));
             if (fread (buffer, sizeof(Record), chunk_records, fp_read) == 0){
                 perror("Error: Failed reading buffer.\n");
@@ -166,7 +171,6 @@ int main(int argc, char *argv[]){
             fflush (fp_write);
             free(buffer);
         }
-        //free(output_file);
         fclose(fp_write);
         i++;
 

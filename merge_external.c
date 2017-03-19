@@ -1,9 +1,9 @@
 #include "merge.h"
 
 //manager fields should be already initialized in the caller
-int merge_runs (MergeManager * merger){	
+int merge_runs (MergeManager * merger){
 	int  result; //stores SUCCESS/FAILURE returned at the end	
-	
+
 	//1. go in the loop through all input files and fill-in initial buffers
 	if (init_merge (merger)!=SUCCESS)
 		return FAILURE;
@@ -127,6 +127,7 @@ int init_merge (MergeManager * manager) {
 	 * The suggestion is to add the heads of each array to a heap data structure, and then remove an element from the top of the heap,
 	 * transfer it to the output buffer, and insert into the heap the next element from the same run as the element being transferred.
 	*/
+	// printf("hiasdsad\n");
 	FILE *fp;
 	for(int n = 0; n < manager->heap_capacity; n++){
 		char file_number[MAX_PATH_LENGTH];
@@ -136,7 +137,7 @@ int init_merge (MergeManager * manager) {
 		strcat(file_name,file_number);
 		strcat(file_name,".dat");
 		if ((fp = fopen (file_name , "rb" ))){
-			// Success case
+			// printf ("fopen success\n");
 			fseek(fp, manager->current_input_file_positions[n]*sizeof(Record), SEEK_SET);
 			int result = fread (manager->input_buffers[n], sizeof(Record), manager->input_buffer_capacity, fp);
 			if (result <= 0) {
@@ -148,9 +149,11 @@ int init_merge (MergeManager * manager) {
 			manager->current_input_buffer_positions[n]++;
 			
 		} else {
+			// printf ("here1\n");
 			free(file_name);
 			return FAILURE;
 		}
+		// printf ("here2\n");
 		fclose(fp);
 		free(file_name);
 	}
@@ -185,7 +188,7 @@ int get_next_input_element(MergeManager * manager, int file_number, Record *resu
 			return EMPTY;
 		}
 
-		if(refill_buffer (manager, file_number)!=SUCCESS){
+		if(refill_buffer (manager, file_number)!=0){
 			return FAILURE;
 		}
 
@@ -219,9 +222,11 @@ int refill_buffer (MergeManager * manager, int file_number) {
             manager->current_input_file_positions[file_number] = -1;
         }
     }else{
+    	// printf ("here3\n");
         free(filename);
         return FAILURE;
 	}
+	// printf ("here4\n");
 	free(filename);
 	fclose(fp);
 
@@ -233,9 +238,10 @@ void clean_up (MergeManager * merger) {
 	for(int x = 0; x < merger->heap_capacity; x++){
 		free(merger->input_buffers[x]);
 	}
+	// printf ("here5\n");
 	free(merger->output_buffer);
 	// free(merger->input_file_numbers);
- //    free(merger->current_input_buffer_positions);
+    // free(merger->current_input_buffer_positions);
 	free(merger->heap);
 	free(merger);
 //	printf("End of 'clean_up.\n");
