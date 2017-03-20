@@ -8,30 +8,17 @@ CFLAGS += -D_FILE_OFFSET_BITS=64
 CFLAGS += -std=c99
  
 # Source files
-DISK_SORT_SRC=disk_sort.c merge_external.c
 
-MERGE_EXTERNAL=merge_external.c
+MERGE_EXTERNAL_TRUE_FRIENDS_SRC=merge_external_true_friends.c
 
-DISTRIBUTION_SRC=distribution.c
-
-TRUE_FRIENDS_SRC=true_friends.c
+TRUE_FRIENDS_SRC=true_friends.c disk_sort.c merge_external.c merge_external_true_friends.c 
 
 
  
-all: disk_sort merge_external distribution true_friends
-
-
-disk_sort: $(DISK_SORT_SRC) $(DISK_SORT_SRC)
-	$(CC) $(CFLAGS) $^ -o disk_sort
-
-merge_external: $(MERGE_EXTERNAL) $(DISK_SORT_SRC)
-	$(CC) $(CFLAGS) $^ -o merge_external
-
-distribution: $(DISTRIBUTION_SRC)
-	$(CC) $(CFLAGS) $^ -o distribution
+all: true_friends
 	
-ture_friends: $(TRUE_FRIEND_SRC)
-	$(CC) $(CFLAGS) $^ -o true_friends	
+true_friends: $(TRUE_FRIENDS_SRC)
+	$(CC) $(CFLAGS) $^ -o true_friends		
 
 clean:  
-	rm disk_sort merge_external output*.dat distribution true_friends
+	rm true_friends

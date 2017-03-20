@@ -21,6 +21,29 @@ int compare (const void *a, const void *b) {
     return (a_f - b_f);
 }
 
+// modify compare function above to compare UID1
+int compare_UID1 (const void *a, const void *b) {
+    int a_UID1 = ((const struct record*) a)->UID1;
+    int b_UID1 = ((const struct record*) b)->UID1;
+    int a_UID2 = ((const struct record*) a)->UID2;
+    int b_UID2 = ((const struct record*) b)->UID2;
+    if (a_UID1 == b_UID1){
+      return (a_UID2 - b_UID2);
+    }
+    return (a_UID1 - b_UID1);
+}
+
+// modify compare function above to compare UID2
+int compare_UID2 (const void *a, const void *b) {
+    int a_UID1 = ((const struct record*) a)->UID1;
+    int b_UID1 = ((const struct record*) b)->UID1;
+    int a_UID2 = ((const struct record*) a)->UID2;
+    int b_UID2 = ((const struct record*) b)->UID2;
+    if (a_UID2 == b_UID2){
+      return (a_UID1 - b_UID1);
+    }
+    return (a_UID2 - b_UID2);
+}
 
 //Sort function that uses qsort, some codes are from handout
 void sort(Record* buffer, int total_records){
@@ -36,7 +59,7 @@ void print_buffer(Record* buffer, int total_records){
 }
 
 //function for initializing the manager to pass to merge_run
-int merge_runs_init(int block_size, int total_mem, int buffer_num) {
+int merge_runs_init(int block_size, int total_mem, int buffer_num, char* sorted_uid) {
     MergeManager * manager = (MergeManager *)calloc(1, sizeof(MergeManager));
     //set up attributes of MergeManager shown in merge.h
     int block_num = total_mem / block_size;
@@ -48,9 +71,16 @@ int merge_runs_init(int block_size, int total_mem, int buffer_num) {
     manager->heap_capacity = buffer_num;
     manager->heap = (HeapElement *)calloc(buffer_num, sizeof(HeapElement));
     manager->input_buffer_capacity = records_per_buffer;
-    strcpy(manager->input_prefix, "output");
-
-    strcpy(manager->output_file_name , "sorted_merge.dat");
+    
+    if (strcmp(sorted_uid, "UID1") == 0){
+      strcpy(manager->input_prefix, "UID1_output");
+      strcpy(manager->output_file_name , "UID1_sorted_merge.dat");
+    }
+    else if (strcmp(sorted_uid, "UID2") == 0){
+      strcpy(manager->input_prefix, "UID2_output");
+      strcpy(manager->output_file_name , "UID2_sorted_merge.dat");
+    }
+    
 
     if (block_num % (buffer_num+1) > 0){
     // Take account for the last block with remaining contents
@@ -87,16 +117,16 @@ int merge_runs_init(int block_size, int total_mem, int buffer_num) {
 }
 
 // function for Phase 1 of 2PMMS
-int main(int argc, char *argv[]){
+//int main(int argc, char *argv[]){
+int disk_sort(char *input_file, int total_mem, int block_size, char* sorted_uid){
+    //if (argc != 4){
+    //    printf ("Usage: disk_sort <file_name> <total_memory> <block_size>\n");
+    //    exit(1);
+    //}
 
-    if (argc != 4){
-        printf ("Usage: disk_sort <file_name> <total_memory> <block_size>\n");
-        exit(1);
-    }
-
-    char *input_file = argv[1];
-    int total_mem = atoi(argv[2]);
-    int block_size = atoi(argv[3]);
+    //char *input_file = argv[1];
+    //int total_mem = atoi(argv[2]);
+    //int block_size = atoi(argv[3]);
     FILE *fp_read;
 
     //check if enough memory
@@ -140,7 +170,13 @@ int main(int argc, char *argv[]){
     while (i < chunks+1) {
         FILE *fp_write;
         char output_file[MAX_PATH_LENGTH];
-        snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "output%d.dat", i);
+	if (strcmp(sorted_uid, "UID1") == 0){
+	  snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "UID1_output%d.dat", i);
+	}
+	if (strcmp(sorted_uid, "UID2") == 0){
+	  snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "UID2_output%d.dat", i);
+	}
+        
         if (!(fp_write = fopen ( output_file , "wb" ))) {
             printf ("Error when writing file sorted_list  \n");
             exit(1);
@@ -151,7 +187,12 @@ int main(int argc, char *argv[]){
                 if (fread (buffer, sizeof(Record), remaining_chunk_records, fp_read) == 0){
                     perror("Error: Failed reading buffer.\n");
                 }
-                qsort (buffer, remaining_chunk_records, sizeof(Record), compare);
+                if (strcmp(sorted_uid, "UID1") == 0){
+		  qsort (buffer, remaining_chunk_records, sizeof(Record), compare_UID1);
+		}
+                else if (strcmp(sorted_uid, "UID2") == 0){
+		  qsort (buffer, remaining_chunk_records, sizeof(Record), compare_UID2);
+		}
                 fwrite(buffer, sizeof(Record), remaining_chunk_records, fp_write);
                 //print_buffer(buffer, total_records);
                 fflush (fp_write);
@@ -165,7 +206,12 @@ int main(int argc, char *argv[]){
             if (fread (buffer, sizeof(Record), chunk_records, fp_read) == 0){
                 perror("Error: Failed reading buffer.\n");
             }
-            qsort (buffer, chunk_records, sizeof(Record), compare);
+            if (strcmp(sorted_uid, "UID1") == 0){
+		  qsort (buffer, remaining_chunk_records, sizeof(Record), compare_UID1);
+	    }
+            else if (strcmp(sorted_uid, "UID2") == 0){
+		  qsort (buffer, remaining_chunk_records, sizeof(Record), compare_UID2);
+	    }
             fwrite(buffer, sizeof(Record), chunk_records, fp_write);
             //print_buffer(buffer, total_records);
             fflush (fp_write);
@@ -177,6 +223,6 @@ int main(int argc, char *argv[]){
     }
     fclose(fp_read);
     //merge here
-    merge_runs_init(block_size, total_mem, sublist+1);
+    merge_runs_init(block_size, total_mem, sublist+1, sorted_uid);
     return 0;
 }
