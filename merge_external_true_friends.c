@@ -21,17 +21,17 @@ int new_merge_runs (NewMergeManager * merger){
   free(left);
   free(right);
   
+   //flush what remains in output buffer
+  if(merger->current_output_buffer_position > 0) {
+    if(new_flush_output_buffer(merger)!=SUCCESS)
+      return FAILURE;
+  }
+  
   if (merger->is_query_true_friends == 0){
     printf("Total number of true friends is %d\n", counter);
   }
   else{ // query_Celebrities
     printf("Total number of distinct user is %d\n", counter);
-  }
-  
-  //flush what remains in output buffer
-  if(merger->current_output_buffer_position > 0) {
-    if(new_flush_output_buffer(merger)!=SUCCESS)
-      return FAILURE;
   }
   
   new_clean_up(merger);

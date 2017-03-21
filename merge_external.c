@@ -3,27 +3,26 @@
 //manager fields should be already initialized in the caller
 int merge_runs (MergeManager * merger){
 	int  result; //stores SUCCESS/FAILURE returned at the end	
+
 	//1. go in the loop through all input files and fill-in initial buffers
 	if (init_merge (merger)!=SUCCESS)
 		return FAILURE;
 
 	while (merger->current_heap_size > 0) { //heap is not empty
-		// printf("heap_size: %d\n", merger->current_heap_size);
 		HeapElement smallest;
 		Record next; //here next comes from input buffer
 		
 		if(get_top_heap_element (merger, &smallest)!=SUCCESS)
 			return FAILURE;
-				
-		result = get_next_input_element (merger, smallest.run_id, &next);		
+
+		result = get_next_input_element (merger, smallest.run_id, &next);
 		
 		if (result==FAILURE)
 			return FAILURE;
 
 		if(result==SUCCESS) {//next element exists, may also return EMPTY
-			if(insert_into_heap (merger, smallest.run_id, &next)!=SUCCESS){				
+			if(insert_into_heap (merger, smallest.run_id, &next)!=SUCCESS)
 				return FAILURE;
-			}
 		}		
 
 
@@ -33,16 +32,14 @@ int merge_runs (MergeManager * merger){
 		merger->current_output_buffer_position++;
 
         //staying on the last slot of the output buffer - next will cause overflow
-
 		if(merger->current_output_buffer_position == merger-> output_buffer_capacity ) {
-			// printf("hiiiiiiiii2\n");
 			if(flush_output_buffer(merger)!=SUCCESS) {
 				return FAILURE;			
 				merger->current_output_buffer_position=0;
 			}	
 		}
 	
-	}	
+	}
 
 	
 	//flush what remains in output buffer
@@ -67,7 +64,7 @@ int get_top_heap_element (MergeManager * merger, HeapElement * result){
 
 	*result=merger->heap[0];  //to be returned
 
-	//now we need to reorganize heap - keep the smallest on top	
+	//now we need to reorganize heap - keep the smallest on top
 	item = merger->heap [--merger->current_heap_size]; // to be reinserted 
 
 	parent =0;
@@ -91,11 +88,11 @@ int get_top_heap_element (MergeManager * merger, HeapElement * result){
 		while ((child = (2 * parent) + 1) < merger->current_heap_size) {
 			// if there are two children, compare them 
 			if (child + 1 < merger->current_heap_size && 
-					(compare_heap_elements_uid2(&(merger->heap[child]),&(merger->heap[child + 1]))>0)) 
+					(compare_heap_elements_UID2(&(merger->heap[child]),&(merger->heap[child + 1]))>0)) 
 				++child;
 			
 			// compare item with the larger 
-			if (compare_heap_elements_uid2(&item, &(merger->heap[child]))>0) {
+			if (compare_heap_elements_UID2(&item, &(merger->heap[child]))>0) {
 				merger->heap[parent] = merger->heap[child];
 				parent = child;
 			} 
@@ -134,11 +131,11 @@ int insert_into_heap (MergeManager * merger, int run_id, Record *input){
 	new_heap_element.UID2 = input->UID2;
 	new_heap_element.run_id = run_id;
 	
-	
 	if (merger->current_heap_size == merger->heap_capacity) {
 		printf( "Unexpected ERROR: heap is full\n");
 		return FAILURE;
 	}
+  	
 	child = merger->current_heap_size++; /* the next available slot in the heap */
 	
 	if (strcmp(merger->sorted_uid, "UID1") == 0){
@@ -153,10 +150,9 @@ int insert_into_heap (MergeManager * merger, int run_id, Record *input){
 		}
 	}
 	else if (strcmp(merger->sorted_uid, "UID2") == 0){
-		
 		while (child > 0) {
 			parent = (child - 1) / 2;
-			if (compare_heap_elements_uid2(&(merger->heap[parent]),&new_heap_element)>0) {
+			if (compare_heap_elements_UID2(&(merger->heap[parent]),&new_heap_element)>0) {
 				merger->heap[child] = merger->heap[parent];
 				child = parent;
 			} 
@@ -165,7 +161,6 @@ int insert_into_heap (MergeManager * merger, int run_id, Record *input){
 		}
 	}
 	else{
-		
 		while (child > 0) {
 			parent = (child - 1) / 2;
 			if (compare_heap_elements(&(merger->heap[parent]),&new_heap_element)>0) {
@@ -199,22 +194,22 @@ int init_merge (MergeManager * manager) {
     sprintf(file_number,"%d",manager->input_file_numbers[n]);
     char output_file[MAX_PATH_LENGTH];
     snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "%s%s.dat", manager->input_prefix, file_number);
-
     
-    if ((fp = fopen (output_file , "rb" ))){    	
+    if ((fp = fopen (output_file , "rb" ))){
       // printf ("fopen success\n");
       fseek(fp, manager->current_input_file_positions[n]*sizeof(Record), SEEK_SET);
-      int result = fread (manager->input_buffers[n], sizeof(Record), manager->input_buffer_capacity, fp);      
-      if (result <= 0)       	
-		manager->current_heap_size -= 1;		
-      
+      int result = fread (manager->input_buffers[n], sizeof(Record), manager->input_buffer_capacity, fp);
+      if (result <= 0) {
+	manager->current_heap_size -= 1;
+      }
       manager->total_input_buffer_elements[n] = result;
       manager->current_input_file_positions[n] =  result;
       insert_into_heap(manager, manager->input_file_numbers[n], &manager->input_buffers[n][manager->current_input_buffer_positions[n]]);
-      manager->current_input_buffer_positions[n]++;      
+      manager->current_input_buffer_positions[n]++;
       
     } else {
-      // printf ("here 11111\n");      
+      // printf ("here 11111\n");
+      
       return FAILURE;
     }
     // printf ("here 22222\n");
@@ -243,39 +238,31 @@ int flush_output_buffer (MergeManager * manager) {
 }
 
 int get_next_input_element(MergeManager * manager, int file_number, Record *result) {
-	
-	// printf("current: %d\n", manager->current_input_buffer_positions[file_number]);
-	// printf("total: %d\n", manager->total_input_buffer_elements[file_number]);
-	if(manager->total_input_buffer_elements[file_number] == manager->current_input_buffer_positions[file_number]){		
+
+	if(manager->total_input_buffer_elements[file_number] == manager->current_input_buffer_positions[file_number]){
 		manager->current_input_buffer_positions[file_number] = 0;
 
         // non SUCCESSFUL CASE
-		if(refill_buffer (manager, file_number)!=0){			
+		if(refill_buffer (manager, file_number)!=0){
 			return FAILURE;
 		}
 		
-		if(manager->current_input_file_positions[file_number] == -1){			
+		if(manager->current_input_file_positions[file_number] == -1){
 			return EMPTY;
 		}
 
-	}
-
-	if (manager->total_input_buffer_elements[file_number] < manager->current_input_buffer_positions[file_number]){
-		exit(-1);
 	}
 
 
 	*result = manager->input_buffers[file_number][manager->current_input_buffer_positions[file_number]];
 	manager->current_input_buffer_positions[file_number]+=1;
 
-	// printf("get_next success\n");
-
 	return SUCCESS;
 }
 
 int refill_buffer (MergeManager * manager, int file_number) {
 	FILE *fp;
-	char num[20	];
+	char num[20];
     sprintf(num,"%d",manager->input_file_numbers[file_number]);
     char output_file[MAX_PATH_LENGTH];
     snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "%s%s.dat", manager->input_prefix, num);

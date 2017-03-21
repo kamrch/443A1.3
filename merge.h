@@ -85,7 +85,7 @@ void clean_up (MergeManager * merger);
 int compare_heap_elements (HeapElement *a, HeapElement *b);
 int compare_heap_elements_new (HeapElement *a, HeapElement *b);
 int compare_heap_elements_uid1 (HeapElement *a, HeapElement *b);
-int compare_heap_elements_uid2 (HeapElement *a, HeapElement *b);
+int compare_heap_elements_UID2 (HeapElement *a, HeapElement *b);
 
 typedef struct new_merge_manager {
 	//HeapElement *heap;  //keeps 1 from each buffer in top-down order - smallest on top (according to compare function)	
@@ -195,6 +195,10 @@ void Celebrities_clean_up (CelebritiesMergeManager * merger);
 int Celebrities_compare_heap_elements(CelebritiesHeapElement *a, CelebritiesHeapElement *b);
 
 int merge_sort(int buffer_num, int mem, int block_size, char* sorted_uid);
+int celebrity_merge_sort(int buffer_num, int total_mem, int block_size, char* output_filename);
 int disk_sort(char* filename, int mem, int block_size, char* sorted_uid, char* output_name);
+int disk_sort_celeb(char* filename, int total_mem, int block_size, char* output_filename);
 int sorted_merge_join(int total_mem, int block_size);
+int flush_outputbuffer (char* filename, Record *output_buffer, int current_output_buffer_position);
+int write_degree(char* input_filename, int block_size, int is_outdegree, char* output_filename);
 #endif

@@ -12,13 +12,18 @@ CFLAGS += -std=c99
 MERGE_EXTERNAL_TRUE_FRIENDS_SRC=merge_external_true_friends.c
 
 TRUE_FRIENDS_SRC=true_friends.c disk_sort.c merge_external.c merge_external_true_friends.c 
+ 
+CELEBRITIES_SRC=celebrities.c disk_sort.c disk_sort_celeb.c merge_external.c merge_external_celeb.c merge_external_true_friends.c helper.c
 
 
  
-all: true_friends
+all: true_friends celebrities
 	
 true_friends: $(TRUE_FRIENDS_SRC)
-	$(CC) $(CFLAGS) $^ -o true_friends		
+	$(CC) $(CFLAGS) $^ -o true_friends
 
+celebrities: $(CELEBRITIES_SRC)
+	$(CC) $(CFLAGS) $^ -o celebrities
+						
 clean:  
-	rm true_friends UID*_output*.dat
+	rm true_friends UID*_output*.dat celebrities
