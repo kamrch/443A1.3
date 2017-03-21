@@ -14,7 +14,7 @@ int compare_celebrity(const void *a, const void *b) {
     return -1;
 }
 
-int disk_sort_q2(char* filename, int total_mem, int block_size, char* output_filename){
+int disk_sort_celeb(char* filename, int total_mem, int block_size, char* output_filename){
 
  	FILE *fp_read;
     
@@ -75,7 +75,7 @@ int disk_sort_q2(char* filename, int total_mem, int block_size, char* output_fil
 
         	}else{
         		CelebritiesRecord * buffer = (CelebritiesRecord *) calloc (records_last_chunk, sizeof (CelebritiesRecord));        	
-                if (fread (buffer, sizeof(CelebritiesRecord), records_last_chunk, fp_read);==0){
+                if (fread (buffer, sizeof(CelebritiesRecord), records_last_chunk, fp_read)==0){
                     perror("Error: Failed reading buffer.\n");
                 }
 
@@ -101,7 +101,6 @@ int disk_sort_q2(char* filename, int total_mem, int block_size, char* output_fil
 		free(buffer);
 		
 	   }
-	   free(filename);
 	   fclose(fp_write);
 
 	   i++; 
@@ -115,14 +114,14 @@ int disk_sort_q2(char* filename, int total_mem, int block_size, char* output_fil
 
  int celebrity_merge_sort(int buffer_num, int total_mem, int block_size, char* output_filename){
 
- 	Q2MergeManager * manager = (Q2MergeManager *)calloc(1, sizeof(Q2MergeManager));
+ 	CelebritiesMergeManager * manager = (CelebritiesMergeManager *)calloc(1, sizeof(CelebritiesMergeManager));
  
  	int records_per_block  = block_size / sizeof(CelebritiesRecord);
  	int block_num = total_mem/block_size;
  	int records_per_buffer = records_per_block * (block_num / (buffer_num + 1));
 
  	manager->heap_capacity = buffer_num;
- 	manager->heap = (Q2HeapElement *)calloc(buffer_num, sizeof(Q2HeapElement));
+ 	manager->heap = (CelebritiesHeapElement *)calloc(buffer_num, sizeof(CelebritiesHeapElement));
  	strcpy(manager->output_file_name , output_filename);
 
     strcpy(manager->input_prefix, "sorted3_"); 
@@ -156,6 +155,6 @@ int disk_sort_q2(char* filename, int total_mem, int block_size, char* output_fil
  	manager->current_input_file_positions = current_file_positions;
  	manager->current_input_buffer_positions = current_buffer_positions;
  	manager->total_input_buffer_elements = total_input_buffer_elements;
- 	q2_merge_runs(manager);
+ 	Celebrities_merge_runs(manager);
  	return 0;
  }

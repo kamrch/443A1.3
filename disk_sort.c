@@ -54,7 +54,7 @@ void sort(Record* buffer, int total_records){
 void print_buffer(Record* buffer, int total_records){
     printf("=====Total records: %d\n=====", total_records);
     for (int i=0; i<total_records; i++){
-        printf("uid2 = %i, uid1 = %i\n", buffer[i].UID2, buffer[i].UID1);
+        printf("UID2 = %i, uid1 = %i\n", buffer[i].UID2, buffer[i].UID1);
     }
 }
 

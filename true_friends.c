@@ -16,13 +16,13 @@ int main (int argc, char *argv[]){
   static const int block_size = 1048576;
   
   char* input_file = argv[1];
-  disk_sort(input_file, memory, block_size, "UID1", "UID1_sorted_merge");
-  disk_sort(input_file, memory, block_size, "UID2", "UID2_sorted_merge");
+  disk_sort(input_file, memory, block_size, "UID1", "UID1_sorted_merge.dat");
+  disk_sort(input_file, memory, block_size, "UID2", "UID2_sorted_merge.dat");
   
-  // to do : scan sorted file uid1 and uid2, and calculate true friends;
+  // to do : scan sorted file uid1 and UID2, and calculate true friends;
   sorted_merge_join(memory, block_size);
-  //remove("UID1_sorted_merge.dat");
-  //remove("UID2_sorted_merge.dat");
+  remove("UID1_sorted_merge.dat");
+  remove("UID2_sorted_merge.dat");
   return 0;
 }
 
