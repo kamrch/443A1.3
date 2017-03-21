@@ -193,7 +193,7 @@ int init_merge (MergeManager * manager) {
     char file_number[MAX_PATH_LENGTH];
     sprintf(file_number,"%d",manager->input_file_numbers[n]);
     char output_file[MAX_PATH_LENGTH];
-    snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "output%s.dat", file_number);
+    snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "%s%s.dat", manager->input_prefix, file_number);
     
     if ((fp = fopen (output_file , "rb" ))){
       // printf ("fopen success\n");
@@ -265,7 +265,7 @@ int refill_buffer (MergeManager * manager, int file_number) {
 	char num[MAX_PATH_LENGTH];
     sprintf(num,"%d",manager->input_file_numbers[file_number]);
     char output_file[MAX_PATH_LENGTH];
-    snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "output%s.dat", num);
+    snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "%s%s.dat", manager->input_prefix, num);
 
 	if ((fp = fopen (output_file, "rb" ))){
           fseek(fp, manager->current_input_file_positions[file_number]*sizeof(Record), SEEK_SET);
