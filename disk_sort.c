@@ -59,7 +59,7 @@ void print_buffer(Record* buffer, int total_records){
 }
 
 //function for initializing the manager to pass to merge_run
-int merge_runs_init(int block_size, int total_mem, int buffer_num, char* sorted_uid) {
+int merge_runs_init(int block_size, int total_mem, int buffer_num, char* sorted_uid, char* output_name) {
     MergeManager * manager = (MergeManager *)calloc(1, sizeof(MergeManager));
     //set up attributes of MergeManager shown in merge.h
     int block_num = total_mem / block_size;
@@ -74,12 +74,12 @@ int merge_runs_init(int block_size, int total_mem, int buffer_num, char* sorted_
     
     if (strcmp(sorted_uid, "UID1") == 0){
       strcpy(manager->input_prefix, "UID1_output");
-      strcpy(manager->output_file_name , "UID1_sorted_merge.dat");
     }
     else if (strcmp(sorted_uid, "UID2") == 0){
       strcpy(manager->input_prefix, "UID2_output");
-      strcpy(manager->output_file_name , "UID2_sorted_merge.dat");
     }
+    
+    strcpy(manager->output_file_name , output_name);
     
 
     if (block_num % (buffer_num+1) > 0){
@@ -118,7 +118,7 @@ int merge_runs_init(int block_size, int total_mem, int buffer_num, char* sorted_
 
 // function for Phase 1 of 2PMMS
 //int main(int argc, char *argv[]){
-int disk_sort(char *input_file, int total_mem, int block_size, char* sorted_uid){
+int disk_sort(char *input_file, int total_mem, int block_size, char* sorted_uid, char* output_name){
     //if (argc != 4){
     //    printf ("Usage: disk_sort <file_name> <total_memory> <block_size>\n");
     //    exit(1);
@@ -223,6 +223,6 @@ int disk_sort(char *input_file, int total_mem, int block_size, char* sorted_uid)
     }
     fclose(fp_read);
     //merge here
-    merge_runs_init(block_size, total_mem, sublist+1, sorted_uid);
+    merge_runs_init(block_size, total_mem, sublist+1, sorted_uid, output_name);
     return 0;
 }

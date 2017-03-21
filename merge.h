@@ -107,35 +107,35 @@ typedef struct new_merge_manager {
 	//int heap_capacity;  //corresponds to the total number of runs (input buffers)
 	char output_file_name [MAX_PATH_LENGTH]; //stores name of the file to which to write the final output
 	int is_query_true_friends;
-}New_MergeManager;
+}NewMergeManager;
 
 //1. main loop
-int new_merge_runs (New_MergeManager * manager); 
+int new_merge_runs (NewMergeManager * manager); 
 
 //2. creates and fills initial buffers, initializes heap taking 1 top element from each buffer 
-int new_init_merge (New_MergeManager * manager); 
+int new_init_merge (NewMergeManager * manager); 
 
 //3. flushes output buffer to disk when full
-int new_flush_output_buffer (New_MergeManager * manager); 
+int new_flush_output_buffer (NewMergeManager * manager); 
 
 //4. returns top heap element, rearranges heap nodes
-//int new_get_top_heap_element (New_MergeManager * manager, HeapElement * result);
+//int new_get_top_heap_element (NewMergeManager * manager, HeapElement * result);
 
 //5. inserts new element into heap, rearranges nodes to keep smallest on top
-//int new_insert_into_heap (New_MergeManager * manager, int run_id, Record *input);
+//int new_insert_into_heap (NewMergeManager * manager, int run_id, Record *input);
 
 //6. reads next element from an input buffer to transfer it to the heap. Uploads records from disk if all elements are processed
-int new_get_next_input_element(New_MergeManager * manager,int type, Record *result); 
+int new_get_next_input_element(NewMergeManager * manager,int type, Record *result); 
 
 //7. refills input buffer from the corresponding run
-int new_refill_buffer (New_MergeManager * manager, int type);
+int new_refill_buffer (NewMergeManager * manager, int type);
 
 //8. Frees all dynamically allocated memory
-void new_clean_up (New_MergeManager * merger);
+void new_clean_up (NewMergeManager * merger);
 
-int join_celebrities(Record *r1, Record *r2, New_MergeManager * merger, int *count);
+int join_celebrities(Record *left, Record *right, NewMergeManager * merger, int *counter);
 
-int join_true_friends(Record *r1, Record *r2, New_MergeManager * merger, int *count);
+int join_true_friends(Record *left, Record *right, NewMergeManager * merger, int *counter);
 
 
 typedef struct CelebritiesHeapElement {
@@ -195,5 +195,6 @@ void Celebrities_clean_up (CelebritiesMergeManager * merger);
 int Celebrities_compare_heap_elements(CelebritiesHeapElement *a, CelebritiesHeapElement *b);
 
 int merge_sort(int buffer_num, int mem, int block_size, char* sorted_uid);
-int disk_sort(char* filename, int mem, int block_size, char* sorted_uid);
+int disk_sort(char* filename, int mem, int block_size, char* sorted_uid, char* output_name);
+int sorted_merge_join(int total_mem, int block_size);
 #endif

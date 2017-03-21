@@ -1,7 +1,7 @@
 #include "merge.h"
 
 //manager fields should be already initialized in the caller
-int new_merge_runs (New_MergeManager * merger){	
+int new_merge_runs (NewMergeManager * merger){	
   
   //1. go in the loop through all input files and fill-in initial buffers
   if (new_init_merge (merger)!=SUCCESS)
@@ -11,7 +11,7 @@ int new_merge_runs (New_MergeManager * merger){
   Record* left = (Record*)calloc(1, sizeof(Record));
   Record* right = (Record*)calloc(1, sizeof(Record));
   
-  if (merger->is_query_true_friends == 1){
+  if (merger->is_query_true_friends == 0){
     join_true_friends(left, right, merger, &counter);
   }
   else{ // query_Celebrities
@@ -21,7 +21,7 @@ int new_merge_runs (New_MergeManager * merger){
   free(left);
   free(right);
   
-  if (merger->is_query_true_friends == 1){
+  if (merger->is_query_true_friends == 0){
     printf("Total number of true friends is %d\n", counter);
   }
   else{ // query_Celebrities
@@ -39,7 +39,7 @@ int new_merge_runs (New_MergeManager * merger){
 }
 
 
-int join_true_friends(Record *left, Record *right, New_MergeManager * merger, int *counter){
+int join_true_friends(Record *left, Record *right, NewMergeManager * merger, int *counter){
   //stores SUCCESS/FAILURE returned at the end
   int result1; 	
   int result2;
@@ -99,7 +99,7 @@ int join_true_friends(Record *left, Record *right, New_MergeManager * merger, in
   return SUCCESS;	
 }
 
-int join_celebrities(Record *left, Record *right, New_MergeManager * merger, int *counter){
+int join_celebrities(Record *left, Record *right, NewMergeManager * merger, int *counter){
   //stores SUCCESS/FAILURE returned at the end	
   int result1; 
   int result2;
@@ -178,7 +178,7 @@ int join_celebrities(Record *left, Record *right, New_MergeManager * merger, int
 }
 
 
-int new_init_merge (New_MergeManager * manager) {
+int new_init_merge (NewMergeManager * manager) {
   FILE *fp_1;
   FILE *fp_2;
   
@@ -208,14 +208,14 @@ int new_init_merge (New_MergeManager * manager) {
   return SUCCESS;
 }
 
-int new_flush_output_buffer (New_MergeManager * manager) {
+int new_flush_output_buffer (NewMergeManager * manager) {
   FILE *fp_write;
   if (!(fp_write = fopen (manager->output_file_name , "a" ))){
-    printf("cannnot open query1.dat\n");
+    printf("cannnot true_friends.dat\n");
     return FAILURE;
   }
   //fseek(fp_write, 0L, SEEK_END);
-  if(manager->is_query_true_friends == 1){
+  if(manager->is_query_true_friends == 0){
     fwrite(manager->output_buffer, sizeof(Record), manager->current_output_buffer_position, fp_write);
   }else{
     fwrite(manager->output_buffer_Celebrities, sizeof(CelebritiesRecord), manager->current_output_buffer_position, fp_write);
@@ -227,7 +227,7 @@ int new_flush_output_buffer (New_MergeManager * manager) {
   return SUCCESS;
 }
 
-int new_get_next_input_element(New_MergeManager * manager, int file_number, Record *result) {
+int new_get_next_input_element(NewMergeManager * manager, int file_number, Record *result) {
   if(manager->current_input_buffer_positions[file_number] == manager->total_input_buffer_elements[file_number]){
     manager->current_input_buffer_positions[file_number] = 0;
     if(new_refill_buffer (manager, file_number)==FAILURE){
@@ -243,7 +243,7 @@ int new_get_next_input_element(New_MergeManager * manager, int file_number, Reco
   return SUCCESS;
 }
 
-int new_refill_buffer (New_MergeManager * manager, int file_number) {
+int new_refill_buffer (NewMergeManager * manager, int file_number) {
   
   
   
@@ -284,13 +284,13 @@ int new_refill_buffer (New_MergeManager * manager, int file_number) {
   return SUCCESS;
 }
 
-void new_clean_up (New_MergeManager * merger) {
+void new_clean_up (NewMergeManager * merger) {
   int i;
   for(i = 0; i < 2; i++){
     free(merger->input_buffers[i]);
   }
   free(merger->input_buffers);
-  if(merger->is_query_true_friends == 1){
+  if(merger->is_query_true_friends == 0){
     free(merger->output_buffer);
   }else{
     free(merger->output_buffer_Celebrities);

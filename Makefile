@@ -21,4 +21,4 @@ true_friends: $(TRUE_FRIENDS_SRC)
 	$(CC) $(CFLAGS) $^ -o true_friends		
 
 clean:  
-	rm true_friends
+	rm true_friends UID*_output*.dat
