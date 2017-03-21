@@ -299,34 +299,3 @@ void new_clean_up (NewMergeManager * merger) {
   free(merger);
   
 }
-
-int compare_heap_elements_new (HeapElement *a, HeapElement *b) {
-  if (a->UID2>b->UID2){
-    //	if ((a->UID2-b->UID2)>0){
-    return 1;
-  } 
-  // else if ((a->UID2==b->UID2) && (a->UID1>b->UID1)){
-  //        return 1;
-  //    }
-  return 0;
-}
-
-int compare_heap_elements_UID1 (HeapElement *a, HeapElement *b){
-  if (a->UID1 > b->UID1){
-    return 1;
-  }
-  else if (a->UID1 == b->UID1 && a->UID2 > b->UID2){
-    return 1;
-  }
-  return 0;
-}
-
-int compare_heap_elements_UID2 (HeapElement *a, HeapElement *b){
-  if (a->UID2 > b->UID2){
-    return 1;
-  }
-  else if (a->UID2 == b->UID2 && a->UID1 > b->UID1){
-    return 1;
-  }
-  return 0;
-}

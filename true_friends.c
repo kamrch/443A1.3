@@ -43,9 +43,8 @@ int sorted_merge_join(int total_mem, int block_size){
   strcpy(manager->output_file_name , "true_friends.dat");
   strcpy(manager->input_file_name_1, "UID1_sorted_merge.dat");
   strcpy(manager->input_file_name_2, "UID2_sorted_merge.dat");
-  int i;
   
-  for(i = 0; i < 2; i++){
+  for(int i = 0; i < 2; i++){
     total_input_buffer_elements[i] = 0;
     
     current_input_file_positions[i] = 0;

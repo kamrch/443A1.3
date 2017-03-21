@@ -84,7 +84,7 @@ void clean_up (MergeManager * merger);
 //9. Application-specific comparison function
 int compare_heap_elements (HeapElement *a, HeapElement *b);
 int compare_heap_elements_new (HeapElement *a, HeapElement *b);
-int compare_heap_elements_uid1 (HeapElement *a, HeapElement *b);
+int compare_heap_elements_UID1 (HeapElement *a, HeapElement *b);
 int compare_heap_elements_UID2 (HeapElement *a, HeapElement *b);
 
 typedef struct new_merge_manager {

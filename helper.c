@@ -120,3 +120,15 @@
  }
  
  
+int compare_heap_elements_new (HeapElement *a, HeapElement *b) {
+  if (a->UID2>b->UID2){
+    //	if ((a->UID2-b->UID2)>0){
+    return 1;
+  } 
+  // else if ((a->UID2==b->UID2) && (a->UID1>b->UID1)){
+  //        return 1;
+  //    }
+  return 0;
+}
+ 
+ 
