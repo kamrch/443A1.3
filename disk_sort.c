@@ -67,7 +67,7 @@ int merge_runs_init(int block_size, int total_mem, int buffer_num, char* sorted_
 
     int blocks_per_buffer = block_num / (buffer_num+1);
     int records_per_buffer = records_per_block * blocks_per_buffer;
-
+    strcpy(manager->sorted_uid, sorted_uid);
     manager->heap_capacity = buffer_num;
     manager->heap = (HeapElement *)calloc(buffer_num, sizeof(HeapElement));
     manager->input_buffer_capacity = records_per_buffer;
@@ -170,12 +170,12 @@ int disk_sort(char *input_file, int total_mem, int block_size, char* sorted_uid,
     while (i < chunks+1) {
         FILE *fp_write;
         char output_file[MAX_PATH_LENGTH];
-	if (strcmp(sorted_uid, "UID1") == 0){
-	  snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "UID1_output%d.dat", i);
-	}
-	if (strcmp(sorted_uid, "UID2") == 0){
-	  snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "UID2_output%d.dat", i);
-	}
+    	if (strcmp(sorted_uid, "UID1") == 0){
+    	  snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "UID1_output%d.dat", i);
+    	}
+    	if (strcmp(sorted_uid, "UID2") == 0){
+    	  snprintf(output_file, sizeof(char) * MAX_PATH_LENGTH, "UID2_output%d.dat", i);
+    	}
         
         if (!(fp_write = fopen ( output_file , "wb" ))) {
             printf ("Error when writing file sorted_list  \n");
